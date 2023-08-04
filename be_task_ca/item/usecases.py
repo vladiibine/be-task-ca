@@ -6,12 +6,14 @@ from .entity import ItemEntity
 from .schema import AllItemsResponse, CreateItemRequest, CreateItemResponse
 
 
+class ItemAlreadyExistsException(Exception):
+    pass
+
+
 def create_item(item: CreateItemRequest, db_repo: ItemRepository) -> CreateItemResponse:
     search_result = db_repo.find_item_by_name(item.name)
     if search_result is not None:
-        raise HTTPException(
-            status_code=409, detail="An item with this name already exists"
-        )
+        raise ItemAlreadyExistsException
 
     new_item = ItemEntity(
         name=item.name,
