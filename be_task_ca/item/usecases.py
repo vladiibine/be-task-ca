@@ -1,5 +1,3 @@
-from fastapi import HTTPException
-
 from .abstract_repository import ItemRepository
 from .entity import ItemEntity
 

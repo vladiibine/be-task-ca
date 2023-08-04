@@ -1,6 +1,4 @@
-from http.client import HTTPException
-
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from .sa_postgres_repository import SAPostgresItemRepository
@@ -23,12 +21,11 @@ async def post_item(
     db_repo = SAPostgresItemRepository(db)
     try:
         return create_item(item, db_repo)
-    
+
     except ItemAlreadyExistsException:
         raise HTTPException(
             status_code=409, detail="An item with this name already exists"
         )
-
 
 
 @item_router.get("/")

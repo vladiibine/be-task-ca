@@ -15,7 +15,7 @@ def run_linter():
 
 
 def run_tests():
-    subprocess.call(["pytest"])
+    subprocess.call(["pytest", "-s"])
 
 
 def create_dependency_graph():
