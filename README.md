@@ -7,9 +7,31 @@ This project is a very naive implementation of a simple shop system. It mimics i
 Please answer the following questions:
 
 1. Why can we not easily split this project into two microservices?
-2. Why does this project not adhere to the clean architecture even though we have seperate modules for api, repositories, usecases and the model?
+   2. Answer: Probabably the best way to split would be one which does not create distributed transactions. As such, 
+      ideally, we'd have a user service, and an item & cart_item service. The item & cart_item service would make 
+      sense because there are transactional operations that must be done on cart checkout: we shouldn't be able to buy 
+      (check out) more items than the number of items we have in physical storage; we also should not be able to even 
+      put them in the cart to begin with - which is why the item & cart_item microservice should not rely on data from 
+      external services in order to execute these transactions
+2. Why does this project not adhere to the clean architecture even though we have seperate modules for api, repositories, 
+   usecases and the model?
+   3. Answer: his project fails to adhere to the clean architecture because the clean architecture consists of 4 layers: 
+      entities, usecases, interfaces/adaptors and frameworks. The codebase seems to be completely missing the 4th layer, 
+      the adapters. All the layers of this application know about and pass along references to sqlalchemy objects. While 
+      this kind of structure is common for code bases, one of the purposes of the clean architecture, is to make it really 
+      easy to switch frameworks and other specific technologies and tools, while keeping all the business rules unmodified. 
+      One place that could work as the "interfaces/adaptors" layer is in the app.py and api.py files. 
+      It could work as an anti-corruption layer, initializing the DB connection, but passing adaptor objects into 
+      the other layers.
 3. What would be your plan to refactor the project to stick to the clean architecture?
+   4. First, create the entities layer (currently, a adaptor-like components are being used instead of "pure" entities)
+      (this has been implemented for the Item entity)
+   5. Second, get fastapi references out of the use-cases layer
 4. How can you make dependencies between modules more explicit?
+   5. The instantiation of all repositories, and passing all repositories down to the use-case layer should be explicit
+      (in the original version of this repo, use-cases would freely use any repository action they please)
+   6. An architectural fitness function could be written, to ensure we never import and instantiate items from
+      "outward" layers in "inward" layers (for instance, we don't import usecases from the entity layer)
 
 *Please do not spend more than 2-3 hours on this task.*
 

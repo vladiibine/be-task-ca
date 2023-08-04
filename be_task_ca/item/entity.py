@@ -9,7 +9,9 @@ class ItemEntity:
     description: str
     price: float
     quantity: int
-    id: Optional[UUID] = None  # can be argued that one should let postgres generate UUIDs
+    id: Optional[
+        UUID
+    ] = None  # can be argued that one should let postgres generate UUIDs
 
     def __post_init__(self):
         if self.id is None:

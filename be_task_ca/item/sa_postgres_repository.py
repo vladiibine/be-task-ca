@@ -14,7 +14,7 @@ def db_item_to_entity(db_item: Item) -> ItemEntity:
         name=db_item.name,
         description=db_item.description,
         price=db_item.price,
-        quantity=db_item.quantity
+        quantity=db_item.quantity,
     )
 
 
@@ -49,4 +49,6 @@ class SAPostgresItemRepository(ItemRepository):
         return (db_item_to_entity(item) for item in self.db_session.query(Item).all())
 
     def find_item_by_id(self, item_id) -> ItemEntity:
-        return db_item_to_entity(self.db_session.query(Item).filter(Item.id == item_id).first())
+        return db_item_to_entity(
+            self.db_session.query(Item).filter(Item.id == item_id).first()
+        )
