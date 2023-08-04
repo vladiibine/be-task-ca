@@ -2,8 +2,8 @@ from .database import engine, Base
 
 # just importing all the models is enough to have them created
 # flake8: noqa
-from .user import model1
-from .item import model2
+from .user import sa_postgres_model
+from .item import sa_postgres_model
 
 
 def create_db_schema():

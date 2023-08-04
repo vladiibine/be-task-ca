@@ -2,13 +2,13 @@ import hashlib
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from ..item.model import Item
+from ..item.abstract_repository import ItemRepository
+from ..item.entity import ItemEntity
 
-from ..item.repository import find_item_by_id
 
-from .model import CartItem, User
+from .sa_postgres_model import CartItem, User
 
-from .repository import (
+from .sa_postgres_repository import (
     find_cart_items_for_user_id,
     find_user_by_email,
     find_user_by_id,
@@ -50,15 +50,15 @@ def create_user(create_user: CreateUserRequest, db: Session) -> CreateUserRespon
     )
 
 
-def add_item_to_cart(user_id: int, cart_item: AddToCartRequest, db: Session) -> AddToCartResponse:
+def add_item_to_cart(user_id: int, cart_item: AddToCartRequest, db: Session, item_repo: ItemRepository) -> AddToCartResponse:
     user: User = find_user_by_id(user_id, db)
     if user is None:
         raise HTTPException(status_code=404, detail="User does not exist")
 
-    item: Item = find_item_by_id(cart_item.item_id, db)
-    if item is None:
+    item_entity: ItemEntity = item_repo.find_item_by_id(cart_item.item_id)
+    if item_entity is None:
         raise HTTPException(status_code=404, detail="Item does not exist")
-    if item.quantity < cart_item.quantity:
+    if item_entity.quantity < cart_item.quantity:
         raise HTTPException(status_code=409, detail="Not enough items in stock")
 
     item_ids = [o.item_id for o in user.cart_items]

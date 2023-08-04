@@ -1,6 +1,6 @@
 from uuid import UUID
 from sqlalchemy.orm import Session
-from .model import CartItem, User
+from .sa_postgres_model import CartItem, User
 
 
 def save_user(user: User, db: Session):

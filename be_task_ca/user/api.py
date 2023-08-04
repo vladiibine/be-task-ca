@@ -7,7 +7,7 @@ from ..common import get_db
 from .usecases import add_item_to_cart, create_user, list_items_in_cart
 
 from .schema import AddToCartRequest, CreateUserRequest
-
+from ..item.sa_postgres_repository import SAPostgresItemRepository
 
 user_router = APIRouter(
     prefix="/users",
@@ -24,7 +24,8 @@ async def post_customer(user: CreateUserRequest, db: Session = Depends(get_db)):
 async def post_cart(
     user_id: UUID, cart_item: AddToCartRequest, db: Session = Depends(get_db)
 ):
-    return add_item_to_cart(user_id, cart_item, db)
+    item_repo = SAPostgresItemRepository(db)
+    return add_item_to_cart(user_id, cart_item, db, item_repo)
 
 
 @user_router.get("/{user_id}/cart")
